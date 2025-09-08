@@ -301,6 +301,43 @@ Currently, for both the AI Studio and self-hosted modes, starting the MCP server
 
     Due to the different startup methods used, the settings for `command` and `args` in the configuration file differ significantly from those described in [2.1 Quick Start](#21-quick-start). However, the command-line arguments and environment variables (such as `PADDLEOCR_MCP_SERVER_URL`) supported by the MCP service itself can still be set in the same way.
 
+#### 2.4.1 Local Mode (Advanced Users)
+
+For advanced users with adequate computing resources and configuration experience, local mode can also be used for quick testing:
+
+1. **Install [uv](https://docs.astral.sh/uv/#installation)**
+
+2. **Add MCP Server Configuration**
+
+    Locate the Claude for Desktop configuration file in one of the following locations:
+
+    - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+    - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+    - **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+    Open the `claude_desktop_config.json` file and add the following configuration:
+
+    ```json
+    {
+      "mcpServers": {
+        "paddleocr-ocr": {
+          "command": "uvx",
+          "args": [
+            "--from",
+            "paddleocr_mcp[local-cpu]@git+https://github.com/PaddlePaddle/PaddleOCR.git@main#subdirectory=mcp_server",
+            "paddleocr_mcp"
+          ],
+          "env": {
+            "PADDLEOCR_MCP_PIPELINE": "OCR",
+            "PADDLEOCR_MCP_PPOCR_SOURCE": "local"
+          }
+        }
+      }
+    }
+    ```
+
+    **Important Note**: Local mode has significant requirements for computing resources, and is recommended for use on well-configured machines. If you encounter issues such as long inference time or insufficient memory, consider using the AI Studio community service mode.
+
 ## 3. Running the Server
 
 In addition to MCP hosts like Claude for Desktop, you can also run the PaddleOCR MCP server via the CLI.

@@ -157,9 +157,10 @@ paddleocr_mcp --help
     - 请勿泄漏您的 **访问令牌**。
     - 如果 `paddleocr_mcp` 无法在系统 `PATH` 中找到，请将 `command` 设置为可执行文件的绝对路径。
 
-5. **重启 MCP 主机**
+4. **重启 MCP 主机**
 
     重启 Claude for Desktop。新的 `paddleocr-ocr` 工具现在应该可以在应用中使用了。
+
 
 ### 2.2 MCP 主机配置说明
 
@@ -297,6 +298,43 @@ paddleocr_mcp --help
     ```
 
     由于使用了不一样的启动方式，配置文件中 `command` 和 `args` 的设置都与 [2.1 快速开始](#21-快速开始) 介绍的方式存在显著不同，但 MCP 服务本身支持的命令行参数与环境变量（如 `PADDLEOCR_MCP_SERVER_URL`）仍然可以以相同的方式设置。
+
+#### 2.4.1 本地模式（高级用户）
+
+对于有计算资源和配置经验的高级用户，也可以使用本地模式进行快速体验：
+
+1. **安装 [uv](https://docs.astral.sh/uv/#installation)**
+
+2. **添加 MCP 服务器配置**
+
+    在以下位置之一找到 Claude for Desktop 配置文件：
+
+    - **macOS**：`~/Library/Application Support/Claude/claude_desktop_config.json`
+    - **Windows**：`%APPDATA%\Claude\claude_desktop_config.json`
+    - **Linux**：`~/.config/Claude/claude_desktop_config.json`
+
+    打开 `claude_desktop_config.json` 文件，添加以下配置：
+
+    ```json
+    {
+      "mcpServers": {
+        "paddleocr-ocr": {
+          "command": "uvx",
+          "args": [
+            "--from",
+            "paddleocr_mcp[local-cpu]@git+https://github.com/PaddlePaddle/PaddleOCR.git@main#subdirectory=mcp_server",
+            "paddleocr_mcp"
+          ],
+          "env": {
+            "PADDLEOCR_MCP_PIPELINE": "OCR",
+            "PADDLEOCR_MCP_PPOCR_SOURCE": "local"
+          }
+        }
+      }
+    }
+    ```
+
+    **重要提示**：本地模式对计算资源有较高要求，建议在配置较好的机器上使用。如遇到推理耗时过长或内存不足等问题，建议使用星河社区服务模式。
 
 ## 3. 运行服务器
 
